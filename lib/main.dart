@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, deprecated_member_use, avoid_unnecessary_containers, unnecessary_const
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, deprecated_member_use, avoid_unnecessary_containers, unnecessary_const, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -32,6 +32,13 @@ class BMICal extends StatefulWidget {
 
 class _BMICalState extends State<BMICal> {
   int currentindex = 0;
+  late String result = "";
+  late double height = 0;
+  late double weight = 0;
+
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,8 +55,8 @@ class _BMICalState extends State<BMICal> {
           gradientDirection: GradientDirection.ttb,
           radius: 5,
           colors: [
-            const Color.fromARGB(255, 255, 0, 140),
-            const Color.fromARGB(255, 85, 17, 181),
+            Color.fromARGB(255, 195, 71, 139),
+            Color.fromARGB(255, 150, 110, 205),
           ],
         ),
         centerTitle: true,
@@ -82,8 +89,9 @@ class _BMICalState extends State<BMICal> {
               SizedBox(
                 height: 12,
               ),
-              TextField(                
+              TextField(
                 keyboardType: TextInputType.number,
+                controller: heightController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                     hintText: "Your Height in cm",
@@ -106,6 +114,7 @@ class _BMICalState extends State<BMICal> {
               ),
               TextField(
                 keyboardType: TextInputType.number,
+                controller: weightController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                     hintText: "Your Weight in kg",
@@ -122,8 +131,14 @@ class _BMICalState extends State<BMICal> {
                 width: double.infinity,
                 child: FlatButton(
                   height: 50,
-                  onPressed: () {},
-                  color: Color.fromARGB(255, 187, 134, 252),                  
+                  onPressed: () {
+                    setState(() {
+                      height = double.parse(heightController.value.text);
+                      weight = double.parse(heightController.value.text);
+                    });
+                    calculateBMI(height, weight);
+                  },
+                  color: Color.fromARGB(255, 187, 134, 252),
                   child: Text(
                     "Calculate",
                     style: TextStyle(
@@ -137,16 +152,44 @@ class _BMICalState extends State<BMICal> {
               SizedBox(
                 height: 35,
               ),
-              Text(
-                "Your BMI is: ",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 152, 152, 152)),
+              Container(
+                width: double.infinity,
+                child: Text(
+                  "Your BMI is: ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 152, 152, 152)),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                width: double.infinity,
+                child: Text(
+                  "$result",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 152, 152, 152)),
+                ),
               )
             ],
           ),
         ),
       ),
     ));
+  }
+
+  void calculateBMI(double height, double weight) {
+    double endresult = weight / (height * height / 10000);
+    String bmi = endresult.toStringAsFixed(2);
+    setState(() {
+      result = bmi;
+    });
   }
 
   void changeIndex(int index) {
